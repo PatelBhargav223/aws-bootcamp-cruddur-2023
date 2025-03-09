@@ -4,6 +4,9 @@ services:
     environment:
       FRONTEND_URL: "https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
       BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      OTEL_SERVICE_NAME: "backend-flask"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "https://api.honeycomb.io"
+      OTEL_EXPORTER_OTLP_HEADERS: "x-honeycomb-team=Rkdn1mIR6mBi96ruHmt7DD"
     build: ./backend-flask
     ports:
       - "4567:4567"
@@ -18,7 +21,33 @@ services:
     volumes:
       - ./frontend-react-js:/frontend-react-js
 
+  dynamodb-local:
+    user: root 
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+     - "8000:8000"
+    volumes:
+    - "./docker/dynamodb:/home/dynamodblocal/data" 
+    working_dir: /home/dynamodblocal
+
+  db: 
+    image: postgres:latest
+    restart: always
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Password
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgressql/data
+
 networks:
   internal-network:
     driver: bridge
     name: cruddur
+
+volumes:
+  db:
+    driver: local
