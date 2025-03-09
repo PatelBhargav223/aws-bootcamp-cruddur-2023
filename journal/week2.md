@@ -9,4 +9,7 @@ gp env HONEYCOMB_API_KEY="hcaik_01jnxxtp9hzagzgtjv8vkhtytpmjc8pdx72mq2xd0yy343p
 # now we can also check if the key is being set or not for that we can run this command 
 env | grep HONEYCOMB_API_KEY 
 
+# inorder to check the api of honeycomb incase of any error then here is the website 
+honeycomb-whoami.glitch.me
 
+IMP : Grade obervibility add this into the resume good for resume 
