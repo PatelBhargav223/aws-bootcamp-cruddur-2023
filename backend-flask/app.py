@@ -18,9 +18,16 @@ from services.show_activity import *
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
+# watchtower--- 
+import watchtower, logging
+   
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.addHandler(watchtower.CloudWatchLogHandler())
+logger.info("Hi")
+logger.info(dict(foo="bar", details={}))
 xray_url = os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
-XRayMiddleware (app, xray_recorder) 
 
 
 # HoneyComb
@@ -39,13 +46,18 @@ processor = BatchSpanProcessor(OTLPSpanExporter())
 provider.add_span_processor(processor)
 
 # now this will shown in the logs within the backend-flask app
-simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
+simple_processor = SimpleSpanProcessor(ConsoleSpanExporter()) 
 provider.add_span_processor(simple_processor)
 
 trace.set_tracer_provider(provider)
 tracer = trace.get_tracer(__name__)
 
 app = Flask(__name__)
+
+# x-ray---
+XRayMiddleware (app, xray_recorder) 
+
+
 
 # Honey Comb
 # Initialize automatic instrumentation with Flask
@@ -70,7 +82,7 @@ def data_message_groups():
   if model['errors'] is not None:
     return model['errors'], 422
   else:
-    return model['data'], 200
+    return model['data'], 200 
 
 @app.route("/api/messages/@<string:handle>", methods=['GET'])
 def data_messages(handle):

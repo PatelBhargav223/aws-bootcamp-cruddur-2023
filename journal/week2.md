@@ -19,3 +19,8 @@ Event driven security : event driven architecture using serverless
 
 
 Middleware: it is designed to handle authentication 
+
+AWS x-ray : AWS X-Ray helps developers analyze and debug production, distributed applications, such as those built using a microservices architecture. With X-Ray, you can understand how your application and its underlying services are performing to identify and troubleshoot the root cause of performance issues and errors {THIS IS OPTIONAL.}
+
+Watchtower: Python CloudWatch Logging. Watchtower is a log handler for Amazon Web Services CloudWatch Logs. CloudWatch Logs is a log management service built into AWS. It is conceptually similar to services like Splunk, Datadog, and Loggly, but is more lightweight, cheaper, and tightly integrated with the rest of AWS.
+
