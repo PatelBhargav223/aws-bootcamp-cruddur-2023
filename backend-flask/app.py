@@ -13,19 +13,32 @@ from services.message_groups import *
 from services.messages import *
 from services.create_message import *
 from services.show_activity import *
+import boto3
+
+session = boto3.Session(
+    region_name="ca-central-1",  # Explicitly set the region here if needed
+)
 
 #x-ray------
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
-# watchtower--- 
-import watchtower, logging
-   
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.addHandler(watchtower.CloudWatchLogHandler())
-logger.info("Hi")
-logger.info(dict(foo="bar", details={}))
+# cloud watch logs--- 
+import watchtower, logging 
+from time import strftime 
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
+# logger.addHandler(watchtower.CloudWatchLogHandler())
+# logger.info("TEST LOG")
+# logger.info(dict(foo="bar", details={}))
+
+# ROLLBAR----
+import os
+import rollbar
+import rollbar.contrib.flask
+from flask import got_request_exception
+
+# xray---- 
 xray_url = os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 
@@ -45,6 +58,11 @@ provider = TracerProvider()
 processor = BatchSpanProcessor(OTLPSpanExporter())
 provider.add_span_processor(processor)
 
+
+# # x-ray---
+# xray_url = os.getenv("AWS_XRAY_URL")
+# xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+
 # now this will shown in the logs within the backend-flask app
 simple_processor = SimpleSpanProcessor(ConsoleSpanExporter()) 
 provider.add_span_processor(simple_processor)
@@ -55,10 +73,36 @@ tracer = trace.get_tracer(__name__)
 app = Flask(__name__)
 
 # x-ray---
-xray_url = os.getenv("AWS_XRAY_URL")
-xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
-XRayMiddleware (app, xray_recorder) 
+XRayMiddleware(app, xray_recorder) 
 
+ 
+# rollbar----
+rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+# @app.before_request
+# def init_rollbar():
+#     """init rollbar module"""
+#     rollbar.init(
+#         # access token
+#         rollbar_access_token,
+#         # environment name - any string, like 'production' or 'development'
+#         'production',
+#         # server root directory, makes tracebacks prettier
+#         root=os.path.dirname(os.path.realpath(__file__)),
+#         # flask already sets up logging
+#         allow_logging_basic_config=False)
+
+#     # send exceptions from `app` to rollbar, using flask's signal system.
+#     got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+@app.before_request
+def init_rollbar():
+    if not getattr(app, '_rollbar_initialized', False):
+        rollbar.init(
+            rollbar_access_token,
+            'production',
+            root=os.path.dirname(os.path.realpath(__file__)),
+            allow_logging_basic_config=False)
+        got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+        app._rollbar_initialized = True
 
 
 # Honey Comb
@@ -76,6 +120,12 @@ cors = CORS(
   allow_headers="content-type,if-modified-since",
   methods="OPTIONS,GET,HEAD,POST"
 )
+
+# rollbar---
+@app.route('/rollbar/test')
+def rollbar_test():
+    rollbar.report_message("Hello world", "warning ")
+    return "Hello World!"
 
 @app.route("/api/message_groups", methods=['GET'])
 def data_message_groups():
@@ -114,7 +164,7 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-  data = HomeActivities.run()
+  data = HomeActivities.run(Logger=LOGGER)
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
