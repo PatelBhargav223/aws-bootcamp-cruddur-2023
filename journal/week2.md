@@ -12,7 +12,7 @@ env | grep HONEYCOMB_API_KEY
 # inorder to check the api of honeycomb incase of any error then here is the website 
 honeycomb-whoami.glitch.me
 
-IMP : Grade obervibility add this into the resume good for resume  
+IMP : Grade observibility add this into the resume good for resume  
 yet to complete the little part of the video from 14:15 in which he talked about observibility and platform security and different types of abservibility platforms 
 
 Event driven security : event driven architecture using serverless  
@@ -23,3 +23,5 @@ Middleware: it is designed to handle authentication
 AWS x-ray : AWS X-Ray helps developers analyze and debug production, distributed applications, such as those built using a microservices architecture. With X-Ray, you can understand how your application and its underlying services are performing to identify and troubleshoot the root cause of performance issues and errors {THIS IS OPTIONAL.}
 
 Watchtower: Python CloudWatch Logging. Watchtower is a log handler for Amazon Web Services CloudWatch Logs. CloudWatch Logs is a log management service built into AWS. It is conceptually similar to services like Splunk, Datadog, and Loggly, but is more lightweight, cheaper, and tightly integrated with the rest of AWS.####THIS IS STILL PENDING ERROR IN BACKEND#### TILL 15:54 
+
+New tool to watch logs and errors while deploying the code : ROLLBAR it is used to store the logs and view the potential errors ht
