@@ -4,7 +4,7 @@ from aws_xray_sdk.core import xray_recorder
 class UserActivities:
   def run(user_handle):
      # xray ---
-    segment=  xray_recorder.begin_segment('user_activities') 
+    # segment=  xray_recorder.begin_segment('user_activities') 
     model = {
       'errors': None,
       'data': None
@@ -25,12 +25,12 @@ class UserActivities:
         'expires_at': (now + timedelta(days=31)).isoformat()
       }]
       model['data'] = results
-     # xray ---
-    dict ={
-      "now" : now.isoformat(),
-      "result-size" : len(model['data'])
-      }
-    subsegment = xray_recorder.begin_segment('mock-data')
-    subsegment.put.metadata('key', dict,'namespace' )
+    #  # xray ---
+    # dict ={
+    #   "now" : now.isoformat(),
+    #   "result-size" : len(model['data'])
+    #   }
+    # subsegment = xray_recorder.begin_segment('mock-data')
+    # subsegment.put.metadata('key', dict,'namespace' )
     
     return model 

@@ -1,14 +1,12 @@
 import './HomeFeedPage.css';
 import React from "react";
-
-import DesktopNavigation  from '../components/DesktopNavigation';
-import DesktopSidebar     from '../components/DesktopSidebar';
+import { Auth } from 'aws-amplify';
+import DesktopNavigation from '../components/DesktopNavigation';
+import DesktopSidebar from '../components/DesktopSidebar';
 import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
 import ReplyForm from '../components/ReplyForm';
-
-// [TODO] Authenication
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
 export default function HomeFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -20,40 +18,53 @@ export default function HomeFeedPage() {
 
   const loadData = async () => {
     try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
       const res = await fetch(backend_url, {
         method: "GET"
       });
-      let resJson = await res.json();
+      const resJson = await res.json();
       if (res.status === 200) {
-        setActivities(resJson)
+        setActivities(resJson);
       } else {
-        console.log(res)
+        console.log(res);
       }
     } catch (err) {
       console.log(err);
     }
   };
-
-  const checkAuth = async () => {
-    console.log('checkAuth')
-    // [TODO] Authenication
-    if (Cookies.get('user.logged_in')) {
+  // old code 
+  // const checkAuth = async () => {
+  //   console.log('checkAuth');
+  //   if (Cookies.get('user.logged_in')) {
+  //     setUser({
+  //       display_name: Cookies.get('user.name'),
+  //       handle: Cookies.get('user.username')
+  //     });
+  //   }
+  // };
+  // new code 
+  const checkAuth = async=>{
+    Auth.currentAuthenticatedUser({
+      bypassCache: false
+    })
+    .then((user)=>{
+      console.log('user', user);
+      return Auth.currentAuthenticatedUser()
+    }).then((cognito_user)=>{
       setUser({
-        display_name: Cookies.get('user.name'),
-        handle: Cookies.get('user.username')
+        display_name : cognito_user.attribute.name,
+        handle: cognito_user.attribute.preferred_username
       })
-    }
+    })
+    .catch((error)=> console.log("there is some error", error))
   };
 
-  React.useEffect(()=>{
-    //prevents double call
+  React.useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
-
     loadData();
     checkAuth();
-  }, [])
+  }, []);
 
   return (
     <article>

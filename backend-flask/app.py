@@ -1,3 +1,4 @@
+from venv import logger
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
@@ -39,8 +40,8 @@ import rollbar.contrib.flask
 from flask import got_request_exception
 
 # xray---- 
-xray_url = os.getenv("AWS_XRAY_URL")
-xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+# xray_url = os.getenv("AWS_XRAY_URL")
+# xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 
 
 # HoneyComb
@@ -59,7 +60,7 @@ processor = BatchSpanProcessor(OTLPSpanExporter())
 provider.add_span_processor(processor)
 
 
-# # x-ray---
+# x-ray---
 # xray_url = os.getenv("AWS_XRAY_URL")
 # xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 
@@ -72,8 +73,8 @@ tracer = trace.get_tracer(__name__)
 
 app = Flask(__name__)
 
-# x-ray---
-XRayMiddleware(app, xray_recorder) 
+# # x-ray---
+# XRayMiddleware(app, xray_recorder) 
 
  
 # rollbar----
@@ -165,7 +166,7 @@ def data_create_message():
 @app.route("/api/activities/home", methods=['GET'])
 @xray_recorder.capture('activities_home')
 def data_home():
-  data = HomeActivities.run()
+  data = HomeActivities.run(logger)
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
