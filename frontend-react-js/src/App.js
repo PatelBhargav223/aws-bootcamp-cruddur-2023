@@ -12,25 +12,29 @@ import ConfirmationPage from './pages/ConfirmationPage';
 import React from 'react';
 import process from 'process';
 import {Amplify} from 'aws-amplify';
-import {
+import { 
   createBrowserRouter,
   RouterProvider
-} from "react-router-dom";
+} from "react-router-dom"; 
+
+
 Amplify.configure({
-  "AWS_PROJECT_REGION": process.env.REACT_APP_AWS_PROJECT_REGION,
+  "aws_project_region": process.env.REACT_APP_AWS_PROJECT_REGION,
   "aws_cognito_region": process.env.REACT_APP_AWS_COGNITO_REGION,
   "aws_user_pools_id": process.env.REACT_APP_AWS_USER_POOLS_ID,
   "aws_user_pools_web_client_id": process.env.REACT_APP_CLIENT_ID,
   "oauth": {},
-  Auth: {
+  "Auth": {
     // We are not using an Identity Pool
-    // identityPoolId: process.env. REACT_APP_IDENTITY_POOL_ID, // REQUIRED Amazon Cognito Identity Pool
-    region: process.env.REACT_APP_AWS_PROJECT_REGION, // REQUIRED Amazon Cognito Region
-    userPoolId: process.env.REACT_APP_AWS_USER_POOLS_ID, // OPTIONAL Amazon Cognito User Pool ID
-    userPoolWebClientId: process.env.REACT_APP_CLIENT_ID, // OPTIONAL - Amazon Cognito
+    // identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
+    "region": process.env.REACT_APP_AWS_COGNITO_REGION,
+    "userPoolId": process.env.REACT_APP_AWS_USER_POOLS_ID,
+    "userPoolWebClientId": process.env.REACT_APP_CLIENT_ID
   }
 });
+
 const router = createBrowserRouter([
+  
   {
     path: "/",
     element: <HomeFeedPage />
@@ -68,6 +72,9 @@ const router = createBrowserRouter([
     element: <RecoverPage />
   }
 ]);
+// console.log(process.env.REACT_APP_AWS_PROJECT_REGION)
+// console.log(process.env.REACT_APP_AWS_USER_POOLS_ID)
+// console.log(process.env.REACT_APP_CLIENT_ID)
 
 function App() {
   return (

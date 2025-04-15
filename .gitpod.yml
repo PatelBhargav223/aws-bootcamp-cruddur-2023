@@ -2,3 +2,36 @@
 vscode:
   extensions:
     - 42Crunch.vscode-openapi 
+image: gitpod/workspace-full  # Use the default Gitpod workspace image, or customize based on your needs
+
+tasks:
+  - init: |
+      # Install dependencies
+      npm install
+  - command: |
+      # Run your frontend and backend containers
+      docker-compose -f docker-compose.yml up --build -d
+
+# env:
+#   AWS_ACCESS_KEY_ID:    # Ensure these secrets are defined securely in Gitpod Settings
+#   AWS_SECRET_ACCESS_KEY: 
+#   AWS_DEFAULT_REGION: ca-central-1  # Default region for AWS
+#   REACT_APP_AWS_PROJECT_REGION: ca-central-1  # Frontend region variable
+#   REACT_APP_AWS_COGNITO_REGION: ca-central-1  # Cognito region variable
+#   REACT_APP_AWS_USER_POOLS_ID: ca-central-1_FAo9JyVT6  # User pool ID
+#   REACT_APP_CLIENT_ID: 6da9elb7pvdpq4e053hcvidahp  # Client ID for Cognito
+
+ports:
+  - port: 3000  # Expose frontend React app
+    onOpen: open-preview
+    visibility: public
+  - port: 4567  # Expose backend API
+    onOpen: open-browser
+
+
+# # Optional: Configure a custom workspace layout
+# vscode:
+#   extensions:
+#     - ms-azuretools.vscode-docker  # Docker extension for VSCode
+#     - dbaeumer.vscode-eslint  # ESLint extension for linting JavaScript code
+

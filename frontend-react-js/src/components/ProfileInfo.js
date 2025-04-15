@@ -28,7 +28,7 @@ export default function ProfileInfo(props) {
   // new code 
   const signOut = async()=>{
     try {
-      await Amplify.signOut({global: true})
+      await Amplify.Auth.signOut({global: true})
       window.location.href = '/'
     } catch (error) {
       console.log('error signing out:', error);

@@ -1,12 +1,15 @@
 import './HomeFeedPage.css';
 import React from "react";
-import { Auth } from 'aws-amplify';
+// import { Auth } from '@aws-amplify/auth';
+// import { Auth } from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 import DesktopNavigation from '../components/DesktopNavigation';
 import DesktopSidebar from '../components/DesktopSidebar';
 import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
 import ReplyForm from '../components/ReplyForm';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
+
 
 export default function HomeFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -43,13 +46,13 @@ export default function HomeFeedPage() {
   //   }
   // };
   // new code 
-  const checkAuth = async=>{
-    Auth.currentAuthenticatedUser({
+  const checkAuth = async() =>{
+    Amplify.Auth.currentAuthenticatedUser({
       bypassCache: false
     })
     .then((user)=>{
       console.log('user', user);
-      return Auth.currentAuthenticatedUser()
+      return Amplify.Auth.currentAuthenticatedUser()
     }).then((cognito_user)=>{
       setUser({
         display_name : cognito_user.attribute.name,
@@ -57,7 +60,7 @@ export default function HomeFeedPage() {
       })
     })
     .catch((error)=> console.log("there is some error", error))
-  };
+  };  
 
   React.useEffect(() => {
     if (dataFetchedRef.current) return;
@@ -74,7 +77,7 @@ export default function HomeFeedPage() {
           popped={popped}
           setPopped={setPopped} 
           setActivities={setActivities} 
-        />
+        /> 
         <ReplyForm 
           activity={replyActivity} 
           popped={poppedReply} 
